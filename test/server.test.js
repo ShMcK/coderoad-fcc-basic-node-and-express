@@ -1,13 +1,18 @@
 const assert = require("assert");
-const sinon = require("sinon");
+const request = require("supertest");
+const server = require("../src/server");
 
 describe("server", () => {
-  // 1.2
-  it('should log "Hello World"', () => {
-    const spy = sinon.spy(console, "log");
-    const server = require("../src/server");
-    const result = spy.calledWith("Hello World");
-    assert.ok(result);
+  // 2.1
+  it('should return "Hello Express" when GET "/" is called', () => {
+    return request(server)
+      .get("/")
+      .expect(200)
+      .then(response => {
+        assert.equal(response.text, "Hello Express");
+      });
+  });
+  after(() => {
     server.close();
   });
 });
