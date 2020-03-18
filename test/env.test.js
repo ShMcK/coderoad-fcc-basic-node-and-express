@@ -1,6 +1,6 @@
 const assert = require("assert");
 const {
-  promises: { stat },
+  promises: { stat, readFile },
   F_OK
 } = require("fs");
 const path = require("path");
@@ -16,5 +16,18 @@ describe(".env", () => {
       return true;
     });
     assert.ok(hasEnv);
+  });
+  // 6.2
+  it("should be ignored in the .gitignore file", async () => {
+    const gitIgnorePath = path.join(process.cwd(), ".gitignore");
+    const gitIgnoreFile = await readFile(gitIgnorePath, "utf8");
+    const lines = gitIgnoreFile.split("\n");
+    let hasMatch = false;
+    for (const line of lines) {
+      if (line.match(/^.env/)) {
+        hasMatch = true;
+      }
+    }
+    assert.ok(hasMatch, ".env is not added to the .gitignore file");
   });
 });
